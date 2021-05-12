@@ -1,0 +1,172 @@
+# Практика с учениками. Необходимые знание: Циклы, списки, функции. Библиотеки turtle, random.
+import turtle
+import random
+import time
+
+t_1 = turtle.Turtle()
+t_1.color('lightgreen')
+t_2 = turtle.Turtle()
+t_2.color('lightgreen')
+t_3 = turtle.Turtle()
+t_3.color('lightgreen')
+t_4 = turtle.Turtle()
+t_4.color('lightgreen')
+t_5 = turtle.Turtle()
+t_5.color('lightgreen')
+t_6 = turtle.Turtle()
+t_6.color('lightgreen')
+t_7 = turtle.Turtle()
+t_7.color('lightgreen')
+
+wn = turtle.Screen()
+wn.bgcolor('lightgreen')
+
+turtles = [t_1, t_2, t_3, t_4, t_5, t_6, t_7]
+colors = ['red', 'green', 'blue', 'orange', 'gray', 'brown', 'yellow']
+
+winner = None
+
+
+def border():
+    marking = turtle.Turtle()
+    marking.hideturtle()
+    marking.penup()
+    marking.speed(10)
+    x = -450
+    y = 250
+
+    for n in range(7):
+        marking.goto(x, y)
+        for i in range(8):
+            marking.pendown()
+            marking.forward(80)
+            marking.penup()
+            marking.forward(40)
+        y -= 100
+
+
+def finish_line():
+    marking = turtle.Turtle()
+    marking.hideturtle()
+    marking.speed(10)
+    marking.width(5)
+    marking.right(90)
+    x = 480
+    y = 420
+
+    for i in range(3):
+        marking.penup()
+        marking.goto(x, y)
+
+        for j in range(14):
+            if i % 2 == 0:
+                marking.pendown()
+                marking.color('white')
+                marking.forward(30)
+                marking.color('black')
+                marking.forward(30)
+            else:
+                marking.pendown()
+                marking.color('black')
+                marking.forward(30)
+                marking.color('white')
+                marking.forward(30)
+
+        x -= 5
+
+
+def turtles_go_to_start():
+    global t_1, t_2, t_3, t_4, t_5, t_6, t_7
+    t_1.shape('turtle')
+    t_1.color('red')
+    t_1.penup()
+    t_1.goto(-450, 300)
+    t_1.pendown()
+
+    t_2.shape('turtle')
+    t_2.color('green')
+    t_2.penup()
+    t_2.goto(-450, 200)
+    t_2.pendown()
+
+    t_3.shape('turtle')
+    t_3.color('blue')
+    t_3.penup()
+    t_3.goto(-450, 100)
+    t_3.pendown()
+
+    t_4.shape('turtle')
+    t_4.color('orange')
+    t_4.penup()
+    t_4.goto(-450, 0)
+    t_4.pendown()
+
+    t_5.shape('turtle')
+    t_5.color('gray')
+    t_5.penup()
+    t_5.goto(-450, -100)
+    t_5.pendown()
+
+    t_6.shape('turtle')
+    t_6.color('brown')
+    t_6.penup()
+    t_6.goto(-450, -200)
+    t_6.pendown()
+
+    t_7.shape('turtle')
+    t_7.color('yellow')
+    t_7.penup()
+    t_7.goto(-450, -300)
+    t_7.pendown()
+
+
+def races():
+    global turtles, winner, colors
+    Flag = True
+    while Flag:
+        for t in turtles:
+            distance_drop = random.randint(5, 50)
+            color_drop = random.choice(colors)
+            t.pencolor(color_drop)
+            if color_drop == t.color()[1]:
+                t.width(3)
+                t.shapesize(0.5, 0.5, 0.5)
+                t.shape('circle')
+                t.stamp()
+                t.shapesize(1, 1, 1)
+                t.shape('turtle')
+                t.forward(distance_drop * 2)
+            else:
+                t.width(2)
+                t.forward(distance_drop)
+
+            if t.xcor() >= 460:
+                winner = t.color()[1]
+                Flag = False
+                time.sleep(3)
+                break
+
+
+def message():
+    global winner, wn
+    marking = turtle.Turtle()
+    marking.hideturtle()
+    marking.penup()
+    marking.goto(-300, 20)
+    marking.pendown()
+    wn.clear()
+    wn.bgcolor('lightgreen')
+    marking.write('WINNER IS ' + winner.upper(), move=True, font=('Consolas', 50, 'normal'))
+
+
+def main():
+    border()
+    finish_line()
+    turtles_go_to_start()
+    races()
+    message()
+
+
+main()
+
+turtle.done()
