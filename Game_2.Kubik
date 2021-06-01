@@ -1,0 +1,107 @@
+"""
+Cбор случайно генерирующихся квадратиков, управляя одним квадратом.
+План урока
+1. Механика героя
+2. Создание базовых нпс
+3. Физика столкновения
+4. Генерация новых нпс
+5. Увеличение размера при столкновение
+6. Счетчик очков
+7. Таймер, к-ый показывает время для получения 100 очков
+8. Запись результата в файл и вывод лучших 10 попыток
+9. Задание случайного времени между появлениями нпс """
+
+import pygame as pg
+import sys
+import random
+WHITE = (255, 255, 255)
+BLACK = (0, 0, 0)
+GRAY = (125, 125, 125)
+LIGHT_BLUE = (64, 128, 255)
+GREEN = (0, 200, 64)
+YELLOW = (225, 225, 0)
+PINK = (230, 50, 230)
+RED = (255, 0, 0)
+
+
+FPS = 60
+W = 800
+H = 600
+# print(pg.font.get_fonts())
+# описание экрана
+sc = pg.display.set_mode((W, H))
+
+# описание player
+player = pg.Rect(W // 2, H // 2, 10, 10)
+
+# создание нпс
+nps = []
+new_nps_timer = 30
+nps_counter = 0
+amount = random.randint(20,35)
+for i in range(amount):
+    length = 5
+    x = random.randint(0, W - length)
+    y = random.randint(0, H - length)
+    nps_random = pg.Rect(x, y, length, length)
+    nps.append(nps_random)
+
+
+#cчётчик
+score = 0
+pg.font.init()
+font = pg.font.Font(None, 35)
+text = font.render(f'score: {score}', True, BLACK)
+
+
+
+clock = pg.time.Clock()
+sc.fill(GRAY)
+
+
+while True:
+    for ev in  pg.event.get():
+        if ev.type == pg.QUIT:
+            sys.exit()
+
+    keys = pg.key.get_pressed()
+    if keys[pg.K_LEFT]:
+        if player.x > 0:
+            player.x -= 3
+    if keys[pg.K_RIGHT]:
+        if player.x < W - 10:
+            player.x += 3
+    if keys[pg.K_UP]:
+        if player.y > 0:
+            player.y -= 3
+    if keys[pg.K_DOWN]:
+        if player.y < H - 10:
+            player.y += 3
+
+    nps_counter += 1
+    if nps_counter >= new_nps_timer:
+        length = 5
+        x = random.randint(0, W - length)
+        y = random.randint(0, H - length)
+        nps_random = pg.Rect(x, y, length, length)
+        nps.append(nps_random)
+        nps_counter = 0
+
+    sc.fill(GRAY)
+    sc.blit(text,(W - 125, 50))
+    pg.draw.rect(sc, RED, player)
+    for i in range(len(nps)):
+        pg.draw.rect(sc,WHITE, nps[i])
+
+    for n in nps:
+        if  player.colliderect(n):
+            nps.remove(n)
+            score += 1
+            player.width += 1
+            player.height += 1
+            text = font.render(f'score: {score}', True, BLACK)
+
+
+
+    pg.display.update()
+    clock.tick(FPS)
