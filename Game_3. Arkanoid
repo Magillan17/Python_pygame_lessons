@@ -1,0 +1,95 @@
+import pygame as pg
+import sys
+import random
+
+FPS = 60
+W = 1240
+H = 720
+
+sc = pg.display.set_mode((W, H))
+fon = pg.image.load('fon.jpg').convert()
+
+platform_w = 200
+platform_h = 20
+platform_speed = 10
+platform_x = random.randint(0, W - platform_w)
+platform_y = H - platform_h * 1.5
+platform = pg.Rect(platform_x, platform_y, platform_w, platform_h)
+
+ball_r = random.randint(10,20)
+ball_speed = random.randint(6,10)
+ball = pg.Rect(platform_x + platform_w //2, platform_y - ball_r - 20 , ball_r, ball_r)
+dx, dy = random.choice([-1, 1]), -1
+
+
+clock = pg.time.Clock()
+
+
+block_list = [0] * 4
+color_list = [0] * 4
+for i in range(4):
+    block_list[i] = [0] * 10
+    color_list[i] = [0] * 10
+
+
+
+for j in range(len(block_list)):
+    for i in range(len(block_list[j])):
+        block_list[j][i] = pg.Rect(30 + 120 * i, 10 + 70 * j, 100, 50)
+        color_list[j][i] = (random.randint(30,255),random.randint(30,255),random.randint(30,255))
+
+
+
+
+while True:
+    for ev in  pg.event.get():
+        if ev.type == pg.QUIT:
+            sys.exit()
+    sc.blit(fon,(0,0))
+
+
+    pg.draw.rect(sc, pg.Color('tomato1'), platform)
+    pg.draw.circle(sc, pg.Color('greenyellow'), ball.center, ball_r)
+
+    for j in range(len(block_list)):
+        for i in range(len(block_list[j])):
+            pg.draw.rect(sc, color_list[j][i], block_list[j][i])
+
+
+
+    key = pg.key.get_pressed()
+    if key[pg.K_LEFT]:
+        if platform.x > 0:
+            platform.x -= platform_speed
+    elif key[pg.K_RIGHT]:
+        if platform.x < W - platform_w:
+            platform.x += platform_speed
+
+    ball.x += ball_speed * dx
+    ball.y += ball_speed * dy
+
+    if ball.centerx < ball_r or ball.centerx > W - ball_r:
+        dx *= -1
+    if ball.centery < ball_r:
+        dy *= -1
+    if ball.colliderect(platform) and dy > 0 :
+        dy *= -1
+
+    flag = True
+    for j in range(len(block_list)):
+        for i in range(len(block_list[j])):
+            if ball.colliderect(block_list[j][i]):
+                block_list[j].pop(i)
+                color_list[j].pop(i)
+                dy *= -1
+                flag = False
+                break
+        if flag == False:
+            break
+
+
+
+
+
+    pg.display.update()
+    clock.tick(FPS)
